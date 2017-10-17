@@ -15,6 +15,7 @@ class PosePoly:
     def get_cv2_poly(self):
         if len(self.poly_points) > 0:
             pts = np.array(self.poly_points, np.int32)
+            pts = cv2.convexHull(pts)
             return pts.reshape((-1, 1, 2))
         else:
             return None
