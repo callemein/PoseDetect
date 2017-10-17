@@ -33,7 +33,6 @@ class PoseHead:
 
         # Score based on the points
         self.score = 0.0
-        self.calc_head_score()
 
         # Variables concerning the head orientation
         self.head_orientation = HeadOrientation.UNKNOWN
@@ -48,6 +47,7 @@ class PoseHead:
 
         # Calculate the head points
         self.fetch_head_data()
+        self.calc_head_score()
 
         # Determine Head orientation
         self.head_orientation = self.get_head_position()
@@ -114,7 +114,7 @@ class PoseHead:
 
         if self.point_head_data is not None:
             for point in self.point_head_data:
-                if not point.is_empty():
+                if not point.empty_point():
                     cum_score += point.score
                     cnt_points += 1
 
