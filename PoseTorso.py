@@ -1,100 +1,81 @@
-import json
-import math
-import numpy as np
-from enum import Enum
-import os
 import cv2
 
-class HeadOrientation(Enum):
-    UNKNOWN = 0
-    FRONTAL = 1
-    LEFT_SIDE = 2
-    RIGHT_SIDE = 3
-    BACK_SIDE = 4
+from PosePoly import *
+from PosePoint import *
 
-class HeadType(Enum):
-    POSE_BOUNDING_BOX = 1
-    POSE_EUCLIDIAN = 2
+
 
 class PoseTorso:
 
-    def __init__(self, pose_data):
-        self.raw_points = pose_data["raw_data"]
-        self.pose_data = pose_data
+    def __init__(self, point_pose_data):
+        self.point_pose_data = point_pose_data
 
-        self.torso_margin = 1.2
+        # Head data contains all the points needed
+        self.torso_point_index = [0, 1, 2, 3, 4, 5, 6, 7, 8, 11, 14, 15, 16, 17]
+        self.point_torso_data = []
 
-        self.torso_data = []
-        self.torso_score = 0.0
+        self.torso_poly = None
+        self.torso_rect = None
 
-        self.get_rect_torso()
+        # Score based on the points
+        self.score = 0.0
+        self.calc_torso_score()
 
-    def empty_point(self, point):
-        if point[0] == 0 and point[1] == 0:
-            return True
-        else:
-            return False
+        # Variables concerning the head calculation
+        self.margin = 1.2
 
-    def euclidean_distance_points(self, pt_a, pt_b):
-        return math.sqrt((pt_a[0] - pt_b[0])
-                  * (pt_a[0] - pt_b[0])
-                  + (pt_a[1] - pt_b[1])
-                  * (pt_a[1] - pt_b[1]))
+        # Calculate the torso points
+        self.fetch_torso_data()
 
-    def draw_torso_pose(self, frame):
-        cv2.rectangle(frame, self.torso_data[0], self.torso_data[1], (127, 127, 255))
+        self.calc_torso_rect()
 
-    def get_rect_torso(self):
-        #Calculate Torso
-        x_positions = []
-        y_positions = []
+    def draw(self, frame):
+        pts = self.torso_poly.get_cv2_poly()
+        cv2.polylines(frame, [pts], True,  (127, 127, 255), 2)
 
-        use_points = [0, 1, 2, 3, 4, 5, 6, 7, 8, 11, 14, 15, 16, 17]
+    def fetch_torso_data(self):
+        self.torso_poly = PosePoly()
 
+        for i in self.torso_point_index:
+            if i in self.point_pose_data:
+                self.point_torso_data.append(self.point_pose_data[i])
+                self.torso_poly.add_point(self.point_pose_data[i].pt)
+
+    def calc_torso_score(self):
         cum_score = 0.0
-        cnt_score = 0
+        cnt_points = 0
 
-        for up in use_points:
-            p = (int(self.raw_points[up*3]), int(self.raw_points[up*3 + 1]))
+        if self.point_torso_data is not None:
+            for point in self.point_torso_data:
+                if not point.is_empty():
+                    cum_score += point.score
+                    cnt_points += 1
 
-            if not self.empty_point(p):
-                cum_score += self.raw_points[up*3 +2]
-                cnt_score +=1
+        if cnt_points > 0:
+            self.score = cum_score / cnt_points
 
-                x_positions.append(p[0])
-                y_positions.append(p[1])
+    def calc_torso_rect(self):
+        if self.torso_poly.get_bb() is not None:
+            bb_torso_poly, bb_torso_poly_shape = self.torso_poly.get_bb()
 
-        self.torso_score = float(cum_score)/float(cnt_score)
+            left = bb_torso_poly[0][0]
+            top = bb_torso_poly[0][1]
 
-        if len(x_positions) > 0:
-            left = min(x_positions)
-            right = max(x_positions)
-        else:
-            left = None
-            right = None
-
-        if len(y_positions) > 0:
-            top = min(y_positions)
-            bot = max(y_positions)
-        else:
-            top = None
-            bot = None
-
-        if (bot is not None and top is not None and left is not None and right is not None):
-
-            width = right - left
-            height = bot  - top
+            width = bb_torso_poly_shape[0]
+            height = bb_torso_poly_shape[1]
 
             #Calculate the center point of this rect
             center = (width/2.0 + left, height/2.0 + top)
+            self.center = center
 
             #Apply margin
-            width *= self.torso_margin
-            height *= self.torso_margin
+            width *= self.margin
+            height *= self.margin
 
-            tl = (int(round(center[0] - width/2, 0)), int(round(center[1] - height/2*1.1, 0)))
+            tl = (int(round(center[0] - width/2, 0)), int(round(center[1] - height/2, 0)))
             br = (int(round(center[0] + width/2, 0)), int(round(center[1] + height/2, 0)))
 
-            self.torso_data = (tl, br)
+            self.torso_rect = (tl, br)
+
         else:
-            self.torso_data = None
+            self.torso_rect = None

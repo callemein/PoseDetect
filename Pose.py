@@ -17,7 +17,7 @@ class Pose:
         self.pose_rh = self.load_pose(raw_pose_data['hand_right_keypoints'])
 
         self.head = PoseHead(self.pose)
-        # self.torso = PoseTorso(raw_pose_data['pose_keypoints'])
+        self.torso = PoseTorso(self.pose)
 
         self.hands = [
             PoseHand(self.pose_lh,  side=HandSide.LEFT),
@@ -28,7 +28,7 @@ class Pose:
         if self.head.score > self.head_threshold:
             self.head.draw(frame)
 
-        # self.torso.draw(frame)
+        self.torso.draw(frame)
 
         if self.hands[0].score > self.hand_threshold:
             self.hands[0].draw(frame)
