@@ -28,12 +28,12 @@ class PoseHead:
         # Head data contains all the points needed
         self.head_point_index = [0, 16, 14, 15, 17]
         self.point_head_data = []
-        self.head_data = []
         self.head_poly = None
         self.head_rect = None
 
         # Score based on the points
         self.score = 0.0
+        self.calc_head_score()
 
         # Variables concerning the head orientation
         self.head_orientation = HeadOrientation.UNKNOWN
@@ -72,8 +72,6 @@ class PoseHead:
         if self.head_poly.get_bb() is not None:
             bb_head_poly, bb_head_poly_shape = self.head_poly.get_bb()
 
-
-
             left = bb_head_poly[0][0]
             top = bb_head_poly[0][1]
 
@@ -110,7 +108,7 @@ class PoseHead:
         else:
             self.head_rect = None
 
-    def calc_hand_score(self):
+    def calc_head_score(self):
         cum_score = 0.0
         cnt_points = 0
 
