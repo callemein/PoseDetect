@@ -11,14 +11,6 @@ class HeadOrientation(Enum):
     FRONTAL = 1
     LEFT_SIDE = 2
     RIGHT_SIDE = 3
-    BACK_SIDE = 4
-
-class HeadNames(Enum):
-    LEFT_EAR = 17
-    LEFT_EYE = 15
-    RIGHT_EAR = 16
-    RIGHT_EYE = 14
-    NOSE = 0
 
 class PoseHead:
 
@@ -50,7 +42,8 @@ class PoseHead:
         self.calc_head_score()
 
         # Determine Head orientation
-        self.head_orientation = self.get_head_position()
+        self.orientation_center = 0.1
+        self.calc_head_orientation()
 
         # Calculate Head rect based on head points + orientation + margin
         self.calc_head_rect()
@@ -66,6 +59,50 @@ class PoseHead:
             if i in self.point_pose_data:
                 self.point_head_data.append(self.point_pose_data[i])
                 self.head_poly.add_point(self.point_pose_data[i].pt)
+
+    def calc_head_orientation(self):
+        self.head_orientation = HeadOrientation.UNKNOWN
+        center_index = 0
+        left_side_index  = [14, 16]
+        right_side_index = [15, 17]
+
+        if len(self.point_pose_data) > 0 and center_index in self.point_pose_data :
+            #calc the distances between left side and right side
+            center_point = self.point_pose_data[center_index]
+
+
+            left_dist  = 0.0
+            right_dist = 0.0
+
+            if center_point.empty_point():
+                self.head_orientation = HeadOrientation.UNKNOWN
+            else:
+
+                for i in left_side_index:
+                    if i in self.point_pose_data and not self.point_pose_data[i].empty_point():
+                        left_dist += center_point.euclidean_distance_points(self.point_pose_data[i])
+
+                for i in right_side_index:
+                    if i in self.point_pose_data and not self.point_pose_data[i].empty_point():
+                        right_dist += center_point.euclidean_distance_points(self.point_pose_data[i])
+
+                if left_dist == 0.0:
+                    left_dist = 0.0000001
+
+                if right_dist == 0.0:
+                    right_dist = 0.0000001
+
+                ratio = left_dist / right_dist
+
+                if ratio > 1.0 + self.orientation_center:
+                    print ("LEFT")
+                    self.head_orientation = HeadOrientation.LEFT_SIDE
+                elif ratio < 1.0 - self.orientation_center:
+                    print ("RIGHT")
+                    self.head_orientation = HeadOrientation.RIGHT_SIDE
+                else:
+                    print("FRONTAL")
+                    self.head_orientation = HeadOrientation.FRONTAL
 
     def calc_head_rect(self):
 
@@ -120,7 +157,3 @@ class PoseHead:
 
         if cnt_points > 0:
             self.score = cum_score / cnt_points
-
-    def get_head_position(self):
-        #TODO Calculate the head orientation based on the available points
-        return HeadOrientation.FRONTAL

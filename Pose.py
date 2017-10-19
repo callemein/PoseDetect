@@ -41,7 +41,7 @@ class Pose:
         cnt_points = len(raw_pose)
 
         if cnt_points % 3 == 0:
-            for i in range(cnt_points/3):
+            for i in range(int(cnt_points/3)):
                pt = PosePoint(  x=raw_pose[(3 * i) + 0],
                                 y=raw_pose[(3 * i) + 1],
                                 score=raw_pose[(3 * i) + 2])
