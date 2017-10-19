@@ -19,13 +19,14 @@ class PoseTorso:
 
         # Score based on the points
         self.score = 0.0
-        self.calc_torso_score()
+        self.max_score = 0.0
 
         # Variables concerning the head calculation
         self.margin = 1.2
 
         # Calculate the torso points
         self.fetch_torso_data()
+        self.calc_torso_score()
 
         self.calc_torso_rect()
 
@@ -47,9 +48,12 @@ class PoseTorso:
 
         if self.point_torso_data is not None:
             for point in self.point_torso_data:
-                if not point.is_empty():
+                if not point.empty_point():
                     cum_score += point.score
                     cnt_points += 1
+
+                    if self.max_score < point.score:
+                        self.max_score = point.score
 
         if cnt_points > 0:
             self.score = cum_score / cnt_points
