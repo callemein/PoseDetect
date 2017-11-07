@@ -3,6 +3,7 @@ from PoseHand import *
 from PoseTorso import *
 
 from PosePoint import *
+from PoseFull import *
 
 class Pose:
 
@@ -19,16 +20,19 @@ class Pose:
         self.head = PoseHead(self.pose)
         self.torso = PoseTorso(self.pose)
 
+        self.full = PoseFull(self.pose)
+
         self.hands = [
             PoseHand(self.pose_lh,  side=HandSide.LEFT),
             PoseHand(self.pose_rh, side=HandSide.RIGHT)
         ]
 
-    def draw_pose(self, frame):
+    def draw_pose(self, frame, bb=False):
         if self.head.score > self.head_threshold:
             self.head.draw(frame)
 
         self.torso.draw(frame)
+        self.full.draw(frame, bb=bb)
 
         if self.hands[0].score > self.hand_threshold:
             self.hands[0].draw(frame)
