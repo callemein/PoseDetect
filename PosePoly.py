@@ -20,6 +20,24 @@ class PosePoly:
         else:
             return None
 
+    def get_bb_cv2_poly(self):
+        bb_poly_points = []
+
+        (tl, br), (width, height) = self.get_bb()
+
+        bb_poly_points.append(tl)
+        bb_poly_points.append((br[0], tl[1]))
+        bb_poly_points.append(br)
+        bb_poly_points.append((tl[0], br[1]))
+
+        if len(bb_poly_points) > 0:
+            pts = np.array(bb_poly_points, np.int32)
+            pts = cv2.convexHull(pts)
+            return pts.reshape((-1, 1, 2))
+        else:
+            return None
+
+
     def get_bb_polys(self, polyB):
         # Calculate Head based on
         x_positions = []
