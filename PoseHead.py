@@ -95,13 +95,10 @@ class PoseHead:
                 ratio = left_dist / right_dist
 
                 if ratio > 1.0 + self.orientation_center:
-                    print ("LEFT")
                     self.head_orientation = HeadOrientation.LEFT_SIDE
                 elif ratio < 1.0 - self.orientation_center:
-                    print ("RIGHT")
                     self.head_orientation = HeadOrientation.RIGHT_SIDE
                 else:
-                    print("FRONTAL")
                     self.head_orientation = HeadOrientation.FRONTAL
 
     def calc_head_rect(self):
