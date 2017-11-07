@@ -13,9 +13,9 @@ class Poses:
 
         self.fetch_poses(raw_pose_data, hand_threshold, head_threshold)
 
-    def draw_all_poses(self, frame):
+    def draw_all_poses(self, frame, bb=False):
         for p in self.poses:
-            p.draw_pose(frame)
+            p.draw_pose(frame, bb=bb)
 
     def fetch_poses(self, raw_pose_data, hand_threshold, head_threshold):
 
