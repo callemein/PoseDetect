@@ -21,7 +21,7 @@ class OpenPoseReader:
         self.load_file(self.openpose_path + self.prefix + str(frame).zfill(self.frame_zfill) + self.suffix + ".json")
 
     def load_file_by_name(self, filename):
-        self.load_file(self.openpose_path + os.path.splitext(filename)[0] + self.suffix + ".json")
+        self.load_file(self.openpose_path + str(os.path.splitext(filename)[0]) + self.suffix + ".json")
 
     def load_file(self, path):
         with open(path) as json_data:
