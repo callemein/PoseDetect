@@ -22,6 +22,7 @@ class PoseHand:
 
         # variables
         self.score = 0.0
+        self.max_score = 0.0
 
         if len(point_hand_data) > 0:
 
@@ -32,9 +33,13 @@ class PoseHand:
             self.calc_hand_score()
 
 
-    def draw(self, frame):
+    def draw(self, frame, rect = False):
         if self.hand_poly is not None:
-            pts = self.hand_poly.get_cv2_poly()
+            if rect is False:
+                pts = self.hand_poly.get_cv2_poly()
+            else:
+                pts = self.hand_poly.get_bb_cv2_poly()
+
             cv2.polylines(frame, [pts], True, (255, 255, 0), 2)
 
     def fetch_hand_data(self):
@@ -54,11 +59,18 @@ class PoseHand:
         cum_score = 0.0
         cnt_points = 0
 
+        tmp_max_score = 0.0
+
         if self.point_hand_data is not None:
             for i in self.point_hand_data:
                 if not self.point_hand_data[i].empty_point():
                     cum_score += self.point_hand_data[i].score
                     cnt_points += 1
 
+                    if tmp_max_score < self.point_hand_data[i].score:
+                        tmp_max_score = self.point_hand_data[i].score
+
         if cnt_points > 0:
             self.score = cum_score / cnt_points
+
+        self.max_score = tmp_max_score
