@@ -25,16 +25,17 @@ class PoseHead:
 
         # Score based on the points
         self.score = 0.0
+        self.max_score = 0.0
 
         # Variables concerning the head orientation
         self.head_orientation = HeadOrientation.UNKNOWN
 
         # Variables concerning the head calculation
-        self.margin = 1.4
-        self.margin_profile = 1.9
+        self.margin = 1.3
+        self.margin_profile = 1.7
 
         self.aspect_ratio = 1.0
-        self.aspect_ratio_profile = 1.5
+        self.aspect_ratio_profile = 1.2
 
 
         # Calculate the head points
@@ -48,9 +49,14 @@ class PoseHead:
         # Calculate Head rect based on head points + orientation + margin
         self.calc_head_rect()
 
-    def draw(self, frame):
-        pts = self.head_poly.get_cv2_poly()
-        cv2.polylines(frame, [pts], True, (255, 255, 0), 2)
+    def draw(self, frame, rect = False):
+        if self.head_poly is not None and self.head_rect is not None:
+            if rect is False:
+                pts = self.head_poly.get_cv2_poly()
+                cv2.polylines(frame, [pts], True, (255, 255, 0), 2)
+            else:
+                cv2.rectangle(frame, self.head_rect[0], self.head_rect[1], (255, 255, 0), 2)
+
 
     def fetch_head_data(self):
         self.head_poly = PosePoly()
@@ -151,6 +157,9 @@ class PoseHead:
                 if not point.empty_point():
                     cum_score += point.score
                     cnt_points += 1
+
+                    if point.score > self.max_score:
+                        self.max_score = point.score
 
         if cnt_points > 0:
             self.score = cum_score / cnt_points
