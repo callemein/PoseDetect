@@ -20,20 +20,25 @@ class PosePoly:
         else:
             return None
 
-    def get_bb_cv2_poly(self):
+    def get_bb_cv2_poly(self, use_rect = False):
         bb_poly_points = []
 
-        (tl, br), (width, height) = self.get_bb()
+        if self.get_bb() is not None:
 
-        bb_poly_points.append(tl)
-        bb_poly_points.append((br[0], tl[1]))
-        bb_poly_points.append(br)
-        bb_poly_points.append((tl[0], br[1]))
+            (tl, br), (width, height) = self.get_bb()
 
-        if len(bb_poly_points) > 0:
-            pts = np.array(bb_poly_points, np.int32)
-            pts = cv2.convexHull(pts)
-            return pts.reshape((-1, 1, 2))
+            bb_poly_points.append(tl)
+            bb_poly_points.append((br[0], tl[1]))
+            bb_poly_points.append(br)
+            bb_poly_points.append((tl[0], br[1]))
+
+            if len(bb_poly_points) > 0:
+                pts = np.array(bb_poly_points, np.int32)
+                pts = cv2.convexHull(pts)
+                return pts.reshape((-1, 1, 2))
+            else:
+                return None
+
         else:
             return None
 
