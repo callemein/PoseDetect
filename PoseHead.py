@@ -31,10 +31,10 @@ class PoseHead:
         self.head_orientation = HeadOrientation.UNKNOWN
 
         # Variables concerning the head calculation
-        self.margin = 1.3
-        self.margin_profile = 1.7
+        self.margin = 1.7
+        self.margin_profile = 2.2
 
-        self.aspect_ratio = 1.0
+        self.aspect_ratio = 0.9
         self.aspect_ratio_profile = 1.2
 
 
@@ -57,6 +57,31 @@ class PoseHead:
             else:
                 cv2.rectangle(frame, self.head_rect[0], self.head_rect[1], (255, 255, 0), 2)
 
+
+    def draw_score(self, frame):
+        if self.head_rect is not None:
+
+            text = str(round(100*self.score, 2))+'%'
+
+            fontFace = cv2.FONT_HERSHEY_SCRIPT_SIMPLEX
+            fontScale = 1
+            thickness = 2
+
+            textSize, baseline = cv2.getTextSize(text, fontFace, fontScale, thickness)
+            baseline += thickness
+
+
+            # Right-Top Corner
+            textOrg = (int(self.head_rect[1][0] - textSize[0] - 5 ),
+                    int(self.head_rect[0][1] + textSize[1] + 10))
+
+            box_tl = (textOrg[0] - 5, self.head_rect[0][1])
+            box_br = (self.head_rect[1][0], textOrg[1] + 5)
+
+            cv2.rectangle(frame, box_tl, box_br, (255, 255, 0), -1)
+
+            cv2.putText(frame, text, textOrg, fontFace, fontScale,
+                    (0, 0, 0), thickness, 8)
 
     def fetch_head_data(self):
         self.head_poly = PosePoly()
