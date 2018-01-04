@@ -5,5 +5,6 @@ from PosePoly import *
 from PosePoint import *
 from PoseHead import *
 from PoseHand import *
+from PoseHandEstimate import *
 from PoseTorso import *
 from PoseFull import *
