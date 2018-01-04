@@ -1,5 +1,6 @@
 from PoseHead import *
 from PoseHand import *
+from PoseHandEstimate import *
 from PoseTorso import *
 
 from PosePoint import *
@@ -25,6 +26,11 @@ class Pose:
         self.hands = [
             PoseHand(self.pose_lh,  side=HandSide.LEFT),
             PoseHand(self.pose_rh, side=HandSide.RIGHT)
+        ]
+
+        self.hands_e = [
+            PoseHandEstimate(self.pose,  side=HandSide.LEFT),
+            PoseHandEstimate(self.pose, side=HandSide.RIGHT)
         ]
 
     def draw_pose(self, frame, bb=False):
