@@ -35,7 +35,7 @@ class Pose:
 
     def draw_pose(self, frame, bb=False):
         if self.head.score > self.head_threshold:
-            self.head.draw(frame)
+            self.head.draw(frame, bb=bb)
 
         self.torso.draw(frame)
         self.full.draw(frame, bb=bb)

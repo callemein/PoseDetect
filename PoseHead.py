@@ -49,9 +49,9 @@ class PoseHead:
         # Calculate Head rect based on head points + orientation + margin
         self.calc_head_rect()
 
-    def draw(self, frame, rect = False):
+    def draw(self, frame, bb = False):
         if self.head_poly is not None and self.head_rect is not None:
-            if rect is False:
+            if bb is False:
                 pts = self.head_poly.get_cv2_poly()
                 cv2.polylines(frame, [pts], True, (255, 255, 0), 2)
             else:
