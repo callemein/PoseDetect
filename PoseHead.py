@@ -2,8 +2,8 @@ from enum import Enum
 
 import cv2
 
-from PosePoly import *
-from PosePoint import *
+from .PosePoly import *
+from .PosePoint import *
 
 
 class HeadOrientation(Enum):

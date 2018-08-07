@@ -1,4 +1,4 @@
-from Pose import *
+from .Pose import *
 
 
 class Poses:

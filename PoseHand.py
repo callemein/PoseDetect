@@ -2,7 +2,7 @@ from enum import Enum
 
 import cv2
 
-from PosePoly import *
+from .PosePoly import *
 
 
 class HandSide(Enum):

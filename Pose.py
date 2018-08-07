@@ -1,10 +1,10 @@
-from PoseHead import *
-from PoseHand import *
-from PoseHandEstimate import *
-from PoseTorso import *
+from .PoseHead import *
+from .PoseHand import *
+from .PoseHandEstimate import *
+from .PoseTorso import *
 
-from PosePoint import *
-from PoseFull import *
+from .PosePoint import *
+from .PoseFull import *
 
 class Pose:
 
