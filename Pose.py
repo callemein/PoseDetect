@@ -14,9 +14,9 @@ class Pose:
         self.hand_threshold = hand_threshold
         self.head_threshold = head_threshold
 
-        self.pose = self.load_pose(raw_pose_data['pose_keypoints'])
-        self.pose_lh = self.load_pose(raw_pose_data['hand_left_keypoints'])
-        self.pose_rh = self.load_pose(raw_pose_data['hand_right_keypoints'])
+        self.pose = self.load_pose(raw_pose_data['pose_keypoints_2d'])
+        self.pose_lh = self.load_pose(raw_pose_data['hand_left_keypoints_2d'])
+        self.pose_rh = self.load_pose(raw_pose_data['hand_right_keypoints_2d'])
 
         self.head = PoseHead(self.pose)
         self.torso = PoseTorso(self.pose)
