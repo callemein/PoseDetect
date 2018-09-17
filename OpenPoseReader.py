@@ -25,11 +25,11 @@ class OpenPoseReader:
         if path.endswith('.zip'):
             try:
                 self.zfile = zipfile.ZipFile(path, 'r')
-                ret = zfile.testzip()
+                ret = self.zfile.testzip()
                 if ret is not None:
-                    print "%s bad zip file, error: %s" % file, ret
+                    print ("%s bad zip file, error: %s" % file, ret)
             except zipfile.BadZipfile as ex:
-                print "%s no a zip file" % path
+                print ("%s no a zip file" % path)
 
     def load_file_by_frame_from_zip(self, frame):
         self.load_zfile(self.prefix + str(frame).zfill(self.frame_zfill) + self.suffix + ".json")
