@@ -132,6 +132,23 @@ class PoseHead:
                 else:
                     self.head_orientation = HeadOrientation.FRONTAL
 
+    def calc_head_rect_margins(self, margins):
+
+        if 'margin' in margins:
+            self.margin = margins['margin']
+
+        if 'aspect_ratio' in margins:
+            self.aspect_ratio = margins['aspect_ratio']
+
+
+        if 'margin_profile' in margins:
+            self.margin_profile = margins['margin_profile']
+
+        if 'aspect_ratio_profile' in margins:
+            self.aspect_ratio_profile = margins['aspect_ratio_profile']
+
+        self.calc_head_rect()
+
     def calc_head_rect(self):
 
         if self.head_poly.get_bb() is not None:
