@@ -23,7 +23,7 @@ class PoseTorso:
 
         # Variables concerning the head calculation
         self.margin_x = 1.35
-        self.margin_y = 10
+        self.margin_y = 1.05
 
         # Calculate the torso points
         self.fetch_torso_data()
