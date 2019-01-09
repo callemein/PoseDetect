@@ -23,6 +23,9 @@ class Pose:
 
         self.full = PoseFull(self.pose)
 
+        self.full_head_rect = None
+        self.full_head_desc = []
+
         self.hands = [
             PoseHand(self.pose_lh,  side=HandSide.LEFT),
             PoseHand(self.pose_rh, side=HandSide.RIGHT)
@@ -32,6 +35,19 @@ class Pose:
             PoseHandEstimate(self.pose,  side=HandSide.LEFT),
             PoseHandEstimate(self.pose, side=HandSide.RIGHT)
         ]
+
+        self.calc_full_head_rect()
+
+    def calc_full_head_rect(self):
+        head = self.head.head_rect
+        full = self.full.full_rect
+        
+        if head is not None:
+            tl = (min(head[0][0], full[0][0]), min(head[0][1], full[0][1]) )
+            br = (max(head[1][0], full[1][0]), max(head[1][1], full[1][1]) )
+            self.full_head_rect = (tl, br)
+        else:
+            self.full_head_rect = full
 
     def draw_pose(self, frame, bb=False):
         if self.head.score > self.head_threshold:
